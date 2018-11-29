@@ -1,0 +1,514 @@
+\documentclass{article}
+
+\usepackage{algorithmic, amsmath, amsthm, amsfonts, amssymb,commath, enumerate, tikz, tikz-cd, color, mathrsfs} %tikz is for drawing lattices %tikz-cd is for commutative diagrams
+															%color is for making notes in red 
+															%mathrsfs is for power set font
+%\usepackage[mathscr]{eucal} %mathscr gives nice script fonts
+
+\newtheoremstyle{problemstyle}  % <name> This is my problemstyle. use begin{problem}.
+        {12pt}                                               % <space above>
+        {}                                               % <space below>
+        {\itshape}                               % <body font>
+        {}                                                  % <indent amount}
+        {\bfseries}                 % <theorem head font>
+        {\normalfont\bfseries.}         % <punctuation after theorem head>
+        {.5em}                                          % <space after theorem head>
+        {}                                                  % <theorem head spec (can be left empty, meaning `normal')>
+
+
+\theoremstyle{problemstyle}
+
+\newtheorem{problem}{Problem}
+
+\theoremstyle{problemstyle}
+
+\newtheorem{definition}{Definition}
+
+\theoremstyle{problemstyle}
+
+\newtheorem{example}{Example}
+
+\theoremstyle{problemstyle}
+
+\newtheorem{lemma}{Lemma}
+
+\theoremstyle{problemstyle}
+
+\newtheorem{proposition}{Proposition}
+
+\theoremstyle{problemstyle}
+
+\newtheorem{theorem}{Theorem}
+
+
+\title{ \vspace{-10ex} %uncomment to remove vertical space
+%title of assignment goes here e.g. "Math 721 Homework 3"
+Notes on Equivariant Stable Homotopy Theory 
+}
+
+\author{David L. Meretzky
+}
+
+
+\date{%date assignment is due goes here
+Thursday November 29th, 2018
+} 
+
+
+\renewcommand*{\thefootnote}{$\dagger$} %changes default footnote marking to a dagger instead of a number (numbers are sometimes mistaken for citations)
+
+\begin{document}
+
+\maketitle
+
+\section{Unstable Equivariant Homotopy}
+
+\subsection{Adjoints and Actions}
+
+\begin{flushleft}
+Let $G$ be a finite group. 
+\end{flushleft}
+
+\begin{definition}
+A $G$ space is a space $X$ together with a continuous map $\phi:G \times X \rightarrow X$ where we denote $\phi(g,x)$ as $g \cdot x$ such that $e$, the identity of the group satisfies $e \cdot x = x$ $\forall x \in X$ and $g\cdot(h\cdot x) = (g \cdot h)\cdot x$ $\forall g,h \in G$. 
+\end{definition}
+
+\begin{definition}
+An equivariant map or a $G$-map $f:X\rightarrow Y$ is a continuous map such that $$f(g\cdot x) = g \cdot f(x)$$ with the notation of definition 1. 
+\end{definition}
+
+\begin{center}
+\begin{tikzcd}
+G \times X \arrow[r,"id_G \times f"] \arrow[d,"\phi"'] & G \times Y \arrow[d,"\phi"]  \\
+X  \arrow[r,"f"] & Y 
+\end{tikzcd}
+\end{center}
+
+Two maps are "$G$-homotopic" if they are homotopic through $G$-maps. $G$ acts on $I \times X$ by $$g(t,x) = (t,gx)$$. If $\{f_t\}_{t\in I}$ is an $I$ indexed family of maps from $X$ to $Y$, with $H(x,t) := f_t(x)$ the following diagram must commute. 
+
+\begin{center}
+\begin{tikzcd}
+(t,x) \arrow[r,"H"] \arrow[d,"g"'] & f_t(x) \arrow[d,"g"]  \\
+(t,gx)  \arrow[r,"H"] & \frac{gf_t(x)}{f_t(gx)} 
+\end{tikzcd}
+\end{center}
+
+When we consider $Top_{*}$, the category of pointed topological spaces, the base point is fixed under the action of $G$.
+
+Denote the category $G$-spaces and $G$-equivariant maps by $\textbf{G-Map}$. If $H$ is a subgroup of a group $G$, the inclusion map $i:H \rightarrow G$ induces a forgetful functor $i^*_H:\textbf{G-Map} \rightarrow \textbf{H-Map}$ which restricts the action of $G$ on a $G$ space to an $H$ space.
+
+Filling in the gratuitous details: let $Y$ be a $G$-space, $\phi:G\times Y\rightarrow Y$, then $i^*(\phi) := \phi(i(-),-):H \times Y \rightarrow Y$.
+
+This functor has both left and right adjoints. Let $X$ be an $H$ space we define the left and right adjoints as follows:
+
+\begin{definition}
+Define the functor $G\times_H - : \textbf{H-Map} \rightarrow \textbf{G-Map}$ as $G\times_H X := G \times X / (gh,x) \sim (g,hx)$. This is the left adjoint and it is called induction.
+\end{definition}
+
+\begin{definition}
+Define the functor $Map^H(G,-): \textbf{H-Map} \rightarrow \textbf{G-Map}$ to be $Map^H(G,-) := \{$ H equivariant maps from $G\rightarrow X\}$
+\end{definition}
+
+We have the following sequence of ajoints:
+
+$$G\times_H - \dashv i^*_H \dashv Map^H(G,-)$$
+
+The adjoint pair $G\times_H - \dashv i^*_H$ is an example of a free forgetful adjunction. The adjoint pair $i^*_H \dashv Map^H(G,-)$ is slightly more nuanced.\\
+
+The unit of the adjunction, $\eta$, is a morphism in $\textbf{G-Map}$ from $X\rightarrow Map^H(G,i^*_H(X))$ defined as follows. Note that $X$ is a $G$-space and therefore has an action $\phi: G\times X \rightarrow X$. Define the unit on each element of $x \in X$ to be the curried version of $\phi$. Explicitly, $$\eta_X:x \mapsto \phi(-,x):G\rightarrow X$$ and function $\phi(-,x)$ is clearly still $G$ equivariant and therefore also $H$ equivariant. \\
+
+The counit of the adjunction, $\varepsilon$, is a morphism in $\textbf{H-Map}$ from $i^*_H(Map^H(G,Y))\rightarrow Y$ where $Y$ is an $H$-space. Define the counit on each element of $f_y \in i^*_H(Map^H(G,Y))$ to be the evaluation at the identity of $G$. Define, $$\varepsilon_{i^*_H(Map^H(G,Y))}:f \mapsto f(e)$$ Let $\phi$ be the $H$ action on the $H$-space $i^*_H(Map^H(G,Y))$ and let $\psi$ denote the $H$ action on the $H$-space $Y$. Note that $f$ is $H$-equivariant and therefore, $\varepsilon(\phi(h,f)) =  \varepsilon(f(-h))= f(eh) = hf(e) = \psi(h,\varepsilon(f))$. I neglect to write the component of $\varepsilon$ here as a subscript because it is so long.  
+
+\begin{example}
+Let $G$ be the cyclic group of four elements $\{e,x,x^2,x^3\}$ and let $H$ be the cyclic group of two elements $\{e,x^2\}$ sitting as a subgroup inside of $G$. Let the set $X = \{0,1,2,3\}$. 
+
+Let the action of $H$ on $X$ be as follows: $e$ acts trivially on X, $x^2$ interchanges $0$ and $2$ and also interchanges $1$ and $3$.  
+
+Then $G\times_H X = G\times X / \{(e,0) \sim (x^2,2), (e,1) \sim (x^2,3), (e,2) \sim (x^2,0), (e,3) \sim (x^2,1), (x,0) \sim (x^3,2),(x,1) \sim (x^3,3),(x,2) \sim (x^3,0),(x,3) \sim (x^3,1)\}$
+\end{example}
+
+When $H$ is the trivial subgroup $G\times_H$ simply endows $X$ with the trivial action. Thus $G\times_H$ can be viewed as free over $G/H$. In fact, this association is given explicitly in the text. Let $X$ be a $G$ space. Then $i^*X$ is an $H$ space. In this case, we obtain the following isomorphism (in this category that means $G$-homeomorphism) $G/H \times X \cong G\times_H i^*X$. Letting $[g] = gH \in G/H$, define $([g], x) \mapsto (g,g^{-1}x)$ and in the other direction $(g,x) \mapsto ([g],gx)$. These are mutually inverse maps and are well defined on cosets.\\ 
+
+The key thing to note here is suppose $h \in H$ and  $g_1h = g_2$, then $g_1 \in [g_2]$, $(g_2,x) \mapsto (g_2,g_2^{-1}x) = (g_1h,(g_1h)^{-1}x) = (g_1 h,h^{-1 }g^{-1}x) \sim (g_1,hh^{-1}g_1^{-1}x) = (g_1,g_1^{-1}x)$. This proves the map is well defined on cosets. 
+
+\begin{example}
+Let * be the zero object for $\textbf{Grp}$. $\textbf{G-Map}(*,X) \cong \{x \in X|g\cdot x = x$ $\forall g \in G\}$ the set of $G$ fixed points in $X$. Denote this set $X^G$. This isomorphism is natural in $X$ and is given explicitly by $f \rightarrow f(*)$.
+\end{example}
+
+\begin{example}
+The set of $H$ fixed points is naturally isomorphic to $\textbf{G-Map}(G/H,X) \cong \{x \in X|h\cdot x =x$ $\forall h \in H\} = X^H$.
+
+For $g \in G$ and $x \in x^H$, $gx$ is then fixed by $gHg^{-1}$. So $g$ is a homomorphism from $X^H$ to $X^{gHg^{-1}}$. Suppose $g$ is in $H$, clearly it is in the stabilizer of $X^H$ then the homomorphism that $g$ induces is trivial. Suppose that $g$ is just in the normalizer of $H$, then $g$ is a homomorphism from $X^G$ to itself but is not neccesarily trivial. Therefore, the Weyl group of $H$, $N(H)/H$ is isomorphic to the group of automorphisms of $X^H$.
+\end{example}
+
+Any $G$ map $f:X \rightarrow Y$ must preserve the fixed point set of $H$ and the action of $N(H)/H$. Let $f^H$ denote the induced map of the fixed point set. 
+
+If $K \subseteq H$ then $X^H \subseteq X^K$. Suppose $x$ is fixed by $H$ then it sure is fixed by $K$. 
+
+Which $g\in G$ define an action $X^K \rightarrow X^H$? That is, for $x$ fixed by $K$, when is $gx$ fixed by $H$?
+
+Precisely when $g^{-1}hg \in K$ $\forall h \in H$: Then $hgx = gkg^{-1}gx = gkx = gx$. 
+
+\begin{definition}
+The category $\mathscr{O}$ of canonical orbits of a group $G$ has objects which are transitive $G$-sets $G/K$, and $G/H$ and morphisms $\alpha:G/H \rightarrow G/K$ given by $\alpha(gH) = g\gamma K$ where $\gamma K \in N(H)/K$. 
+\end{definition}
+
+That is, $\alpha$ must be well defined on cosets. $\alpha(hH) = h\gamma K$ but also $\alpha(hH) = \alpha(H) = \gamma K$. Therefore $\gamma^{-1}h\gamma \in K \subseteq H$ as desired. 
+
+\begin{definition}
+We define a contravariant functor $F_X:\mathscr{O}^{op}\rightarrow \textbf{Set}$, which takes $G$ sets $G/H$ to fixed point sets $X^H$. Again, $\alpha:G/H \rightarrow G/K$ iff $\exists \gamma\in G$ such that $\forall h \in H$, $\gamma^{-1}h\gamma \in K$. We will show that these $\gamma$ are exactly the elements of $G$ which define a map of fixed point sets $\alpha_{*}:X^K\rightarrow X^H$, thus $F(\alpha) = \alpha_{*}:X^K\rightarrow X^H$. 
+\end{definition}
+
+Note: $\{\gamma \in G| h = \gamma k\gamma^{-1} \forall h \in H \}$ = $\{\gamma \in G| \gamma^{-1}h\gamma = k \forall h \in H \}$ = 
+$\{\gamma \in G| \gamma^{-1}h\gamma \in K \forall h \in H \}$. 
+
+We see that the functor $F$ is a presheaf from in $[\mathscr{O}^{op},Set]$
+
+\subsection{Cells, Spheres, and G-CW complexes}
+
+\begin{definition}
+Define the disk and sphere, $D(V) = \{v \in V|$ $||v|| \leq 1\}$ and $S(V) = \{v \in V|$ $||v|| = 1\}$. Define the representation sphere $S^V = D(V)/S(V)$ with the quotient topology. This is isomorphic to $V_{+}$, the one point compactification of $V$. 
+\end{definition}
+
+Letting $V = \mathbb{R}^n$, then from now on $S^n$ is going to denote $S^{\mathbb{R}^n}$ with trivial $G$ action.
+
+We are going to define $G-CW$ complexes where the action will take place to have cells of the form $G/H \times D^n$ and $G/H \times S^{n-1}$. This is going to nicely let us use the product hom adjunction along with example 3 to reduce statements about $G$-$CW$-cells in a complex $X$ to $CW$-cells in the fixed points of $X$ under $H$.  $(G/H \times D^n, X) = (D^n, (G/H,X)) = (D^n, X^H)$. 
+
+We choose not to use cells of the form $G\times_H D(V)$ and $G\times_H S(V)$ where $D(V)$ and $S(V)$ have an $H$ action because of some non-trivial mathematics that says that the $G$-$CW$-complexes of the form $G/H \times D^n$ and $G/H \times S^{n-1}$ can be used to recover $G$-$CW$-complexes of the other form. 
+
+In particular, we assemble the $G$-$CW$-complexes by induction over both the grading by the natural numbers and by the elements of $\mathscr{O}$. 
+
+\begin{example}
+Let $G = S^1$, we consider the sphere as a $S^1$-$CW$ complex. It has two $0$-$cells$, $S^1/S^1 \times D^0$, which are fixed points corresponding to the north and south poles. In addition it has one $1$-$cell$ $S^1/{e}\times D^1$, This has attaching maps which identify each endpoint of the $1$-$cell$ with one of the two $0$-$cells$. 
+\end{example}
+
+\begin{example}
+Let $G = C_2$, we consider the sphere as a $C_2$-$CW$ complex. The action of $C_2$ on the sphere will rotate it $180$ degrees. It has two $0$-$cells$, $C_2/C_2 \times D^0$, which are fixed points corresponding to the north and south poles. In addition it has one $1$-$cell$ $C_2/{e}\times D^1$, This has attaching maps which identify each endpoint of the $1$-$cell$ with one of the two $0$-$cells$. Note: $(e,D^1)$ is the line of longitude going through $Greenwich$, $(g,D^1)$ is the line of longitude going through Singapore.  It also has one $2$-$cell$ $C_2/{e}\times D^1$. Note: $(e,D^2)$ is the Western Hemisphere and $(g,D^2)$ is the Eastern Hemisphere.
+\end{example}
+
+\subsection{Dimension and Weak Equivalence}
+
+Adams says the first theorem in homotopy theory is the theorem that $\pi_r(S^n) = 0$ for $r <n$. More coloquially, you can't lasso a beachball.
+
+\begin{proposition}
+If $dim V^H  <  dim W^H$ for all $H$, then $[S^V,S^W]^G=0$.
+\end{proposition}
+
+In the equivariant sense, $dim V^{()}$ is going to be a function that assigns to a subgroup $H \subseteq G$ the value $dim(V^H)$. So $S^V$ and $S^W$ are functions of subgroups of $G$. 
+
+\begin{definition}
+The $Hurewicz$ $Dimension$, $Hur(X)$ is defined to be the greatest $n$ such that $\pi_r(X) = 0$ for all $r < n$. 
+\end{definition}
+
+For spheres we have $Hur(S^{V^H}) = dim(S^{V^H})$. The following proposition generalizes $2.4$
+
+\begin{proposition}
+If $dim(X^H)  <  Hur(Y^H)$ for all $H$, then $[X,Y]^G=0$.
+\end{proposition}
+
+Recall in the ordinary case that a map $f:X\rightarrow Y$ between path connected spaces is called an n-equivalence if $f_*:\pi_r(X)\rightarrow \pi_r(Y)$ is an isomorphism for $r < n$ and epi (right invertible) for $r=n$. 
+
+\begin{definition}
+Let $n$ be a function which assigns to each subgroup $H\subseteq G$ a value $n(H)$ which may be an integer or $\infty$, such that conjugate subgroups have the same value, $n(H) = n(gHg^{-1})$, then a $G$-map $f:X \rightarrow Y$ is an $n$-equivalence if $f^H:X^H\rightarrow Y^H$ is an ordinary $n(H)$-equivalence for each $H$.
+\end{definition}
+
+\begin{example}
+For example, $f:S^V \rightarrow S^W$ is an $n$-equivalence if for each subgroup $H \subset G$, $f^H:S^{V^H} \rightarrow S^{W^H}$ is an $n(H)$-equivalence. That is, $f^H_*:\pi_r(S^{V^H}) \rightarrow \pi_r(S^{W^H})$ is an isomorphism of groups for $r < n(H)$ and is epi for $r = n(H)$. 
+\end{example}
+
+
+The $f^H$ here are going to be the adjoint conjugates of $G$-maps $f:X \rightarrow Y$, under the chain of adjoints $(G/H \times D^n, X) = (D^n, (G/H,X)) = (D^n, X^H)$. 
+
+\begin{theorem}[$G$-Whitehead]
+Let $W$ be a $G$-$CW$-complex and let $f:X \rightarrow Y$ be a $G$-map which is an $n$-equivalence. Then the induced map $f_*:[W,X]^G\rightarrow[W,Y]^G$ is onto if $dim(W^H) \leq n(H)$ for all $H$, and is one-to-one if $dim(W^H) < n(H)$ for all $H$. 
+\end{theorem}
+
+\subsection{Notes on Suspension Theory}
+
+In $\textbf{Top}$, If $X$ is locally compact and Hausdorff, $hom(X \times I, Y) \cong hom(I,Y^X)$.\\ 
+In $\textbf{Top}_*$, homotopies between based spaces are required to be based maps. A map $h:X \times I \rightarrow Y$ is a based homotopy means that $h(x_0,t) = y_0$ for all $t \in I$. 
+
+\begin{definition}
+Non-equivariantly, for each non-negative integer $n$, we have a homotopy functor $\pi_n = [S^n, -]$ from  $\textbf{Top}_*$ to $\textbf{Set}$, called the $n^{th}$ $homotopy$ $group$. 
+\end{definition}
+
+The forgetful functor $U:\textbf{Top}_*$ to $\textbf{Top}$ has a left adjoint $+$ defined on objects $X \mapsto X\coprod \{*\}$, and on morphisms by mapping the extra point of $X\coprod \{*\}$ to the extra point of $Y\coprod \{*\}$ if $f:X \rightarrow Y$. Note that $U$ preserves limits and $+$ preserves colimits. 
+
+\begin{definition} For pointed spaces $(X,x_0)$ and $(Y,y_0)$ define the wedge product $X \vee Y$ to be the quotient of the coproduct of the spaces modulo the basepoints, $X \coprod Y / \{x_0 \sim y_0\}$. This can be realized as the following pushout diagram:
+\end{definition}
+
+\begin{center}
+\begin{tikzcd}
+* \arrow[r] \arrow[d] & X \arrow[d]  \\
+Y  \arrow[r] & X \vee Y 
+\end{tikzcd}
+\end{center}
+
+\begin{definition}
+The smash product of two pointed spaces $(X,x_0)$ and $(Y,y_0)$ is defined to be $X \wedge Y = X \times Y / X \vee Y$
+\end{definition}
+
+\begin{definition}
+The smash-hom adjunction is the version of the product-hom adjunction for $\textbf{Top}_*$ and is given as follows:
+$$X \wedge - \dashv (-)^X$$
+\end{definition}
+
+Both $S^1$ and $(-)^{S^1}$ define functors as a special case and are written as $\Sigma$ and $\Omega$ respectively. We call these the reduced suspension functor and the loop space functor. Passing to basepoint preserving homotopy classes of morphisms, we obtain for every pair of pointed spaces $X$ and $Y$
+
+$$[\Sigma X, Y] \cong [X, \Omega Y]$$
+
+We can define these functors less categorically as follows:
+
+\begin{definition}
+The join of a two spaces $X$ and $Y$ in $\textbf{Top}$ is denoted $X * Y$ and is defined to be $(X \times Y \times I)/ \{\{x_1, y, 0\} \sim \{x_2, y, 0\}, \{x, y_1,1\} \sim \{x, y_2, 1\}\}$
+\end{definition}
+
+\begin{definition}
+The cone of a space $X$ in $\textbf{Top}$ is defined to be the quotient space $(X\times I)/(X \times\{0\}) = X \times I / \{\{x_1, 0\} \sim \{x_2, 0\}\}$. The cone of $X$ is written $CX$. 
+\end{definition}
+
+\begin{example}
+The join of the one point space $\{*\} = D^0$ with a topological space $X$ is precisely the cone of $X$.\\
+$\{*\}*X = (X \times \{*\} \times I)/ \{\{x_1, *, 0\} \sim \{x_2, *, 0\}, \{x, *,1\} \sim \{x, *, 1\}\} \cong (X \times I) / \{\{x_1, 0\} \sim \{x_2, 0\}\}$ = $CX$.
+\end{example}
+
+\begin{definition}
+The suspension of a space $X$ in $\textbf{Top}$ is defined to be the quotient space $(X\times I)/(X \times\{0\}, X \times \{1\}) = X \times I / \{x_1,0\}\sim \{x_2,0\},\{x_1,1\} \sim \{x_2,1\}\}$. The suspension of $X$ is denoted $SX$.
+\end{definition}
+
+\begin{example}
+The join of the two point space $\{*\}\coprod \{*\} = S^0$ with a topological space $X$ is precisely the suspension of $X$.
+
+$SX = S^0 * X$. 
+\end{example}
+
+\begin{definition}
+The reduced suspension of a pointed space $X \in \textbf{Top}_*$ denoted $\Sigma X$ is defined to be $SX/(\{x_0\} \times I) = SX/\{\{x_0,t\}\sim\{x_0,s\}\}$ where $x_0$ is the basepoint of $X$ and $s,t \in I$.
+\end{definition}
+
+\begin{example}
+Now it is verified that these two constructions of $\Sigma X$ are indeed the same. 
+That is, $S^1 \wedge X = SX/(\{x_0\} \times I)$. By definition, $SX/(\{x_0\} \times I) = ((X\times I)/(X \times\{0\}, X \times \{1\}))/(\{x_0\} \times I) = (S^1 \times X)/(X \times \{0\}, \{x_0\} \times S^1) = S^1 \times X/ S^1 \vee X = S^1 \wedge X$.  
+\end{example}
+
+\begin{proposition}
+The $0$ sphere, $S^0$, is the unit when $\wedge$ makes the category of compactly generated hausdorff spaces into a symmetric monoidal category.
+\end{proposition}
+
+\begin{proof}
+Compute $S^0 \wedge X = S^0 \times X/ S^0 \vee X = X\coprod X/*\coprod X = X$. 
+\end{proof}
+
+\begin{proposition}
+As right and left adjoints respectively to the inclusion functor, the one point compactification preserves products, Stone-Čech compactification preserves coproducts. Thefore $X^* \wedge Y^* = (X \times Y)^*$ where $^*$ denotes the one-point compactification. Similarly, $X' \vee Y' = (X \coprod Y)'$ where $'$ denotes the Stone-Čech compactification. 
+\end{proposition}
+
+\begin{proposition}
+The product $S^1 \wedge S^n \cong S^{n+1}$. 
+\end{proposition}
+\begin{proof}
+The base case holds because $S^1 \wedge S^0 = S^1$. Notice that for $S^1 \wedge S^n$ is the same thing as the wedge of the one point compactifications $\mathbb{R}^* \wedge {\mathbb{R}^n}^*$. By the previous proposition this is equal to ${\mathbb{R}^{n+1}}^*$.\\
+Less categorically, $S^1 \wedge S^n = (I \times S^n)/(\{0 \times S^n\},\{1 \times S^n\}, \{I \times x_0\}) = (I \times S^n)/(\{0 \times S^n\},\{1 \times S^n\}) = S^{n+1}$.   
+\end{proof}
+
+\begin{proposition}
+Let $X$ be a pointed space. Then $\pi_n(X) = \pi_{n-1}(\Omega X)$
+\end{proposition}
+
+\begin{proof}
+By definition, $\pi_n(X) = [S^n,X] = [S \wedge S^{n-1},X]  = [S^{n-1},\Omega X] = \pi_{n-1}(\Omega X)$
+\end{proof}
+
+\subsection{The G-suspension Theorem}
+
+For the unreduced suspension of $G$-spaces without base-point, the join $S(V)*X$ is used. For a reduced suspension of $G$-spaces with base-point the smash product $S^V \wedge X$ is used. Adam's defines the action of $G$ on these products the same way: $$g(x,y) = (gx,gy)$$   
+
+Adams claims that the naturality of the projection from $X * Y$ down to $X \wedge S^1 \wedge Y$ is natural and therefore the proofs for the equivariant case go through using $G$-Whitehead, provided that $3$ conditions following the example hold: 
+
+\begin{example}
+Note that in the non-equivariant case it is easy to see the existance of a projection in the following example. Letting $X = S^0$ then $X * Y = SY$ which has a projection down to $\Sigma Y = S^1 \wedge Y = S^0 \wedge S^1 \wedge Y$. 
+\end{example}
+
+\begin{enumerate}
+\item The restriction of the comparison map to a fixed-point-set is another instance of the same comparison map, for instance $$X^H * Y^H \rightarrow X^H \wedge S^1 \wedge Y^H.$$
+\item The comparison map is classically a weak equivalence.
+\item The $G$-spaces involved are $G$-$CW$-complexes. 
+\end{enumerate}
+
+\begin{proposition}
+The projection we are looking for has kernel $\{x_0,y_0,I\}$. The proof of this follows the arguement given in example $9$. Naturality follows by preservation of basepoint. 
+\end{proposition}
+
+Let $S^V : [X,Y]^G \rightarrow [S^V \wedge X,S^V \wedge Y]^G$ by $f \mapsto id_{S^V} \wedge f$. Adams says this is a (1-1) correspondence under suitable conditions. Let $\Omega^V(Z)$ be the space of pointed maps $Z^{S^V}$ with $G$ action given by $$(g\omega)(s) = g(\omega(g^{-1}s))$$
+
+It suffices to show that the unit of the adjunction $$Y \rightarrow \Omega^V (S^V\wedge Y)$$ is an $n$-equivalence. 
+
+The $n = n(H)$ function must have the following properties:
+
+\begin{enumerate}
+\item For each subgroup $H \subset G$ such that $V^H > 0$ ($dim >0$) we have $n(H) \leq 2 Hur(Y^H)-1$
+\item For each pair of subgroups $K \subset H \subset G$ such that $V^K > V^H$ we have that $n(H) \leq Hur(Y^K)-1$. 
+\end{enumerate}
+
+\begin{theorem}
+If the above conditions are satisfied, the map $$Y \rightarrow \Omega^V (S^V\wedge Y)$$ is an $n$-equivalence. 
+\end{theorem}
+
+By $G$-Whitehead, the function $S^V$ (equivariant suspension) is onto if $X$ is a $G$-$CW$-complex and $dim(X^H) \leq n(H)-1$ for each $H$. 
+
+\subsection{Allowable Representations}
+
+We choose some class of "allowable representations" of $G$ so that this class is closed under sums and isomorphisms. There is an ordering on the allowable representations writing $W \geq V$ if $W \cong U \oplus W$ for some $U$. Let $X$ be a finite-dimensional $G$-$CW$-complex and $Y$ a $G$-space.
+
+\begin{theorem}
+There exists an allowable $W_O = W_O(X)$ such that for any allowable $W \geq W_O$ and any allowable $V$, the map $$S^V:[S^W \wedge X,S^W \wedge Y]^G \rightarrow[S^V \wedge S^W \wedge X,S^V \wedge S^W \wedge Y]^G$$ is a 1-1 correspondence. Additionally, this holds for any subcomplex or subdivision of $S^W \wedge X$. 
+\end{theorem}
+
+The result follows from the previous theorem provided we can satisfy the following inequalities on the dimensions. 
+
+\begin{enumerate}
+\item If for some $H$ there is an allowable $V$ with $V^H > O$ then $$dim W^H + dim X^H \leq 2 dim W^H - 2.$$ If there is any non-zero $V^H$ by putting enough copies of it into $W$ we can increase this $dim W^H$ until the inequality is satisfied. 
+\item If for some $K \subset H$ there is an allowable $V$ with $V^K > V^H$, then $$dim W^H + dim X^H \leq dim W^K - 2$$. By putting sufficiently many copies of $V$ into $W$ we can increase $dim W^K - dim W^H$. This holds for all larger $W$. 
+\end{enumerate}
+
+\subsection{The $G$-analogue of the Spanier-Whitehead Category}
+
+Let $\mathcal{C}$ be a category with objects given by allowable representations $V$ of $G$ and morphisms given by inner-product-preserving $R$-linear $G$-maps.
+
+Given two $G$-spaces $X$,$Y$ with basepoints, we wish to define a functor which takes an object $V$ of $\mathcal{C}$ and gives us the set $[S^V \wedge X,S^V \wedge Y]^G$. 
+
+For any morphism $i:V \rightarrow W$ in $\mathcal{C}$, we first use $i$ to identify $W$ with $U \oplus V$ where $U$ is the orthogonal complement of the image of $i(V)$ under the inner product. We now associate to $i$ the following composite function:
+
+\begin{center}
+\begin{tikzcd}
+{[S^V \wedge X,S^V \wedge Y]^G} \arrow[r, "S^U"]  & {[S^U \wedge S^V \wedge X,S^U \wedge S^V \wedge Y]^G} \arrow[d]  \\
+ & {[S^W \wedge X,S^W \wedge Y]^G}  \arrow[u];
+\end{tikzcd}
+\end{center}
+
+So we now have a $\textbf{Set}$ valued functor. Denote it $F$. Clearly, $\mathcal{C}$ has finite coproducts and products. 
+
+Now we wish to check that the functor has the following equalizing property:
+
+that is, if $f,g:U\rightarrow V$ in $\mathcal{C}$ then there is a further morphism $h:V\rightarrow W$ such that $F(hf) = F(hg)$. 
+
+Adams says it is easy to reduce to the case where $f$ is an automorphism of $V$ and $g = 1$. One can see via counter-example that it is not sufficient to take $h=1$ that is, the composite $$S^V\wedge X \xrightarrow[]{f^{-1}\wedge 1} S^V\wedge X \xrightarrow[]{\phi} S^V\wedge Y \xrightarrow[]{f \wedge 1} S^V\wedge Y$$ need not be $G$-homotopic to $\phi$. However, we can take $h$ to be the injection of $V$ as the second factor in $V\oplus V$. Clearly we have $hf = (1\oplus f)h$. On the left hand side we are applying $f$ to $V$ and then including it in the sum on the right we are first including $V$ then acting on only the second factor. However $1\oplus f$ is homotopic to $f \oplus 1$. For, $f \oplus 1$ we have that $(f \oplus 1)h$ and $h$ induce the same function.\\ 
+
+We may then pass to the limit and define $$\{X,Y\}^G = \lim_{\xrightarrow[V \in \mathcal{C}]{}}[S^V \wedge X, S^V \wedge Y]^G.$$
+
+\begin{proposition}
+If $dim V^H < dim W^H$ for all $H$, then $$\{S^V,S^W\}^G = 0$$ 
+\end{proposition}
+
+\begin{proposition}
+If $dim(X^H) \leq Hur (Y^H) - 1$ for all $H$, then $$\{X,Y\}^G = 0$$
+\end{proposition}
+
+In each case we are taking the limit of sets which are trivial. 
+
+\begin{proposition}
+If $X$ is a finite-dimensional $G$-$CW$-complex, then the limit $\{X,Y\}^G$ is attained by $[S^W \wedge X, S^W \wedge Y]^G$ for all sufficiently large $W$. 
+\end{proposition}
+
+For later use we need to assure ourselves that this category is really "stable" that is, for two $G$-spaces $X$, $Y$ and an allowable representation $U$. For each object $V$ of $\mathcal{C}$ we have a function  $$[S^V\wedge X,S^V\wedge X]^G \xrightarrow[]{Susp_V} [S^V \wedge X \wedge S^U, S^V \wedge Y \wedge S^U]^G$$ which takes $f$ to $f \wedge 1_U$ 
+
+\begin{lemma}
+If $X$ is a finite-dimensional $G$-$CW$-complex then passing to the limit of allowable representations we obtain a $1$-$1$ correspondence $$\{X,Y\}^G \xrightarrow[]{Susp} \{X \wedge S^U, Y \wedge S^U\}^G$$
+\end{lemma}
+
+By the previous proposition, for each $Susp_V$ there is a sufficiently large representation which makes each map a $1$-$1$ correspondence. 
+
+In order to make the sets $\{X,Y\}^G$ into groups we need a "suspension coordinate" on which $G$ acts trivially. Now assume that trivial representations are allowable. Then the sets $\{X,Y\}^G$ become additive groups, i.e. hom sets of a preadditive category.  
+
+\begin{theorem}
+Suppose $X$ is a finite $G$-$CW$-complex and $Y$ is a $G$-space for which each fixed-point-set $Y^H$ is an ordinary $CW$-complex with finitely many cells of each dimension. Then $\{X,Y\}^G$ is a finitely generated abelian group. 
+\end{theorem}
+
+Adam's says that the crucial point is because of proposition $10$ there is some finite extension of $V$ to $W$ such that $\{X,Y\}^G = [S^W \wedge X,S^W \wedge Y]^G$. To prove that this is finitely generated is a proper adaptation of the usual inductive methods with the methods in section 1.2. 
+
+\subsection{Pre-additive, Additive, Pre-abelian, and Abelian Categories}
+
+\begin{definition}
+A category is preadditive if each hom set has the structure of an abelian group and each composition $mor(x,y) \times mor(y,z) \rightarrow mor(x,z)$ is bilinear. Since every hom set is non-empty, and is an element of $\textbf{Grp}$ the $0$ map is present in each hom set.  
+\end{definition}
+
+\begin{proposition}
+If a preadditive category has an initial or a final object then it has a zero object. 
+\end{proposition}
+
+\begin{proposition}
+If a preadditive category has either finite products or coproducts then it has both and these objects coincide. A category is called additive if it is preadditive and has finite products and coproducts. 
+\end{proposition}
+
+\begin{definition}
+A pre-abelian category is an additive category such that every morphism has a kernel and a cokernel. Equivalently it has all finite limits and colimits. Finite limits is equivalent to finite products, given by additivity and equalizers guaranteed as the kernel of $f-g$.
+\end{definition}
+
+\begin{proposition}
+In pre-abelian category every morphism $f:A \rightarrow B$ has a canonical decomposition $$A\xrightarrow[]{p}coker(kerf) \xrightarrow[]{\overline{f}} ker(coker f) \xrightarrow[]{i} B$$ 
+\end{proposition}
+
+\begin{definition}
+If $\overline{f}$ in the above proposition is always an isomorphism then the pre-abelian category is called abelian. This is equivalent to the category being ballanced, the bijections are isomorphisms.
+\end{definition}
+
+
+
+% \subsection{From previous:}
+% 
+% \begin{proposition}
+% The infinite sphere, $S^{\infty}$, is contractable. 
+% \end{proposition}
+% \begin{proof}
+% To show this it suffices to show that $S^{\infty}$ is homotopy equivalent to $D^{\infty}$.  Let $S^{\infty}$ be the colimit of the diagram $$S^0 \hookrightarrow S^1 \hookrightarrow S^2 \hookrightarrow...$$ Similarly, let  $D^{\infty}$ be the colimit of the diagram $$D^1 \hookrightarrow D^2 \hookrightarrow...$$  In general the following diagram commutes: 
+% 
+% \begin{center}
+% \begin{tikzcd}
+% S^{n-1} \arrow[r, hookrightarrow] \arrow[d,hookrightarrow] & S^{n} \arrow[d,hookrightarrow]  \\
+% D^{n}  \arrow[r,hookrightarrow] & D^{n+1} 
+% \end{tikzcd}
+% \end{center}
+% 
+% This guarantees a morphism $b:S^{\infty} \hookrightarrow D^{\infty}$. Similarly, the commutativity of the following diagram ensures a morphism $c:D^{\infty} \twoheadrightarrow S^{\infty}$:
+% 
+% \begin{center}
+% \begin{tikzcd}
+%  & S^n \arrow[r, hookrightarrow]  & S^{n+1}   \\
+% D^{n}  \arrow[r,hookrightarrow] \arrow[ur,twoheadrightarrow] & D^{n+1} \arrow[ur,twoheadrightarrow]
+% \end{tikzcd}
+% \end{center}
+% 
+% For finite $n$, $S^n$ and $D^n$ are the colimits of the diagrams $$S^0 \hookrightarrow S^1 \hookrightarrow S^2 \hookrightarrow... \hookrightarrow S^n$$ and $$D^1 \hookrightarrow D^2 \hookrightarrow... \hookrightarrow D^n$$ respectively. The short exact sequence $$S^{n-1} \hookrightarrow D^n \twoheadrightarrow S^n$$ has morphisms guaranteed by the definitions of the two colimits respectively. Their composition is the $0$-map. We are also guaranteed the morphisms $$D^n \twoheadrightarrow S^n \hookrightarrow D^{n+1}$$ who's composition is the usual inclusion map 
+% 
+% The composition of the colimits is still exact, therefore, $$S^{\infty} \hookrightarrow D^\infty \twoheadrightarrow S^\infty$$ is exact. Taking the compositions of the colimits in the other order we obtain that $$D^\infty \twoheadrightarrow S^\infty \hookrightarrow D^{\infty}$$ is the identity on $D^\infty$. It follows that $S^\infty$ is contractable.  
+% 
+% \end{proof}
+
+% \subsection{Questions, Directions:}
+% 
+% \begin{enumerate}
+% \item Given the counit of the loop smash adjunction $\epsilon: \Sigma\Omega X \rightarrow X$. Let $Ff$ be the pullback of the following diagram $X \rightarrow Y$ and $P(Y) \rightarrow Y$. It is a fibration. Why does the diagram on page 63 CR commute?
+% 
+% \item Observe that $\pi_{n+1}(X,x)$ can be viewed as the set of relative homotopy classes of maps $(CS^n,S^n) \rightarrow (X,x)$. 
+% 
+% \item What was done is the $G$-freudenthal.
+% 
+% \item Ask about direct proof of the statement in example $9$. Draw picture.
+% 
+% \item Is the projection map a fibration whenever it is a local homeomorphism?
+% 
+% \item Cofibration is a closed inclusion. Are these the correct dual point set topology characterizations?
+% 
+% \item Are all fibrations sheaves?  
+% 
+% \item Is the category of fibrations of total spaces and base spaces the category of algebras for some monad? 
+% 
+% \item Draw pictures to show confusion about $Mi$ vs $Mf$ vs $CX$.
+% 
+% \item Understand homotopy cofiber sequence. 
+% 
+% \item Hopefully, heading towards understanding fully HELP, Whitehead, and Freudenthal.
+% 
+% \end{enumerate}
+
+\end{document}

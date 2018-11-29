@@ -1,0 +1,191 @@
+\documentclass{article}
+
+\usepackage{algorithmic, amsmath, amsthm, amsfonts, amssymb, enumerate, tikz, tikz-cd, color, mathrsfs} %tikz is for drawing lattices %tikz-cd is for commutative diagrams
+															%color is for making notes in red 
+															%mathrsfs is for power set font
+%\usepackage[mathscr]{eucal} %mathscr gives nice script fonts
+
+\newtheoremstyle{problemstyle}  % <name> This is my problemstyle. use begin{problem}.
+        {12pt}                                               % <space above>
+        {}                                               % <space below>
+        {\itshape}                               % <body font>
+        {}                                                  % <indent amount}
+        {\bfseries}                 % <theorem head font>
+        {\normalfont\bfseries.}         % <punctuation after theorem head>
+        {.5em}                                          % <space after theorem head>
+        {}                                                  % <theorem head spec (can be left empty, meaning `normal')>
+
+
+\theoremstyle{problemstyle}
+
+\newtheorem{problem}{Problem}
+
+
+\title{ \vspace{-10ex} %uncomment to remove vertical space
+%title of assignment goes here e.g. "Math 721 Homework 3"
+Notes on Some Set Theoretic Constructions from a Categorical Perspective
+}
+
+
+\author{David L. Meretzky
+}
+
+
+\date{%date assignment is due goes here
+June 22nd, 2018
+} 
+
+
+\renewcommand*{\thefootnote}{$\dagger$} %changes default footnote marking to a dagger instead of a number (numbers are sometimes mistaken for citations)
+
+\begin{document}
+
+\maketitle
+
+These notes are based on the first chapter of Asu Vaisman's Dover book \textit{Cohomology and Differential Forms.}
+
+\section{Categories}
+
+\textbf{Definition 1.} A category $\mathcal{C}$ consists of a class of objects, $Ob(\mathcal{C})$, and for each pair of objects $A$ and $B$, a class of morphisms $Mor(A,B)$. For each object there is an identity morphism $1_A \in Mor(A,A)$.  Lastly, for each triple of objects we have a a binary operation called composition $$\circ: Mor(A,B) \times Mor(B,C) \rightarrow Mor(A,C)$$
+If each collection of morphisms is a set, we say that the category is $locally$ $small$. If the class of objects is a set, we say that the category is $small$.\\
+
+\textbf{Ex 1.} The class of sets forms a category $\textbf{Set}$ whose morphisms are functions. 
+
+\textbf{Ex 2.} The set of integers forms a category with morphisms given by divisibility $|$. For example, $Mor(4,8)$  is a singleton because 4 divides 8, however, $Mor(4,9)$ is just $\emptyset$. Each integer divides itself and lastly, we can check that composition is well defined as follows: if $a | b$ and $b | c$ then $a|c$. 
+
+\textbf{Ex 3.} In general, groups, rings, or any other algebraic objects form a category. The class of groups is a category $\textbf{Grp}$ whose morphisms are group homomorphisms. 
+
+\textbf{Ex 4.} Every group can itself be viewed as a category with one object, whose morphisms are  group elements.
+
+\section{Injectivity and Surjectivity}
+
+$\textbf{Definition 2.}$ Let $A$, $B$ and $X$ be objects of a cateogry $\mathcal{C}$. A morphism $u: A \rightarrow B$ is said to be injective if for any object $X$, the map $'u: Mor(X,A) \rightarrow Mor(X,B)$ defined as $'u(v) = u\circ v$ is injective.\\ 
+
+\begin{center}
+\begin{tikzcd}
+A \arrow[r, "u"] & B  \\
+X \arrow[u,"v"] \arrow[ru,"u \circ v = 'u(v)"'] &
+\end{tikzcd}
+\end{center}
+\begin{center}
+\textbf{Figure 1.}
+\end{center}
+
+$\textbf{Propositon 1.}$ We will now verify that this definition agrees with our usual definition of injectivity in the category $\textbf{Set}$. Let $u$ be a set map which satisfies the above property. Let $a_1,a_2 \in A$ such that $a_1 \neq a_2$. Let $v_1, v_2$ be two morphisms (both constant functions) in $Mor(X,A)$ defied as follows: $v_1:X \rightarrow A$ such that $\forall x \in X$, $v_1(x) = a_1$ and $v_2:X \rightarrow A$ such that $\forall x \in X$, $v_2(x) = a_2$ then because $v_1 \neq v_2$, we have $'u(v_1) \neq 'u(v_2)$ and consequently, $u(a_1) \neq u(a_2)$. 
+
+Suppose now that $u$ is injective in the usual sense. Let $v_1 \neq v_2$. This means there exists an element $x \in X$ such that $v_1(x) \neq v_2(x)$; furthermore $u(v_1(x)) \neq u(v_2(x))$ by the injectivity of $u$, and thus $'u(v_1) \neq 'u(v_2)$. \\
+
+$\textbf{Definition 3.}$ A morphism $u: A \rightarrow B$ is said to be surjective, if for any object $X$, the map $u': Mor(B,X) \rightarrow Mor(A,X)$ defined on $v \in Mor(B,X)$ as $u'(v) = v\circ u$ is injective.\\ 
+
+\begin{center}
+\begin{tikzcd}
+& X \\
+A \arrow[r, "u"'] \arrow[ru, "u'(v) = v\circ u"] & B \arrow[u, "v"']
+\end{tikzcd}
+\end{center}
+\begin{center}
+\textbf{Figure 2.}
+\end{center}
+
+
+$\textbf{Proposition 2.}$ We will now verify that this definition agrees with our usual definition of surjectivity in the category $\textbf{Set}$.  Suppose that the above condition holds. Then for any $b \in B$ define a pair of functions $v_1,v_2 \in Mor(B,X)$ which disagree on $b$, but agree on every other element of $B$. Then since $u'(v_1) \neq u'(v_2)$, there must be an element $a \in A$ such that $u(a) = b$, if there were not such an element, then we obtain $u'(v_1) = u'(v_2)$, a contradiction. 
+
+Suppose now that $u$ is injective. Then for any other set $X$ take $v_1,v_2 \in Mor(B,X)$ such that $v_1 \neq v_2$. This means that there exists an element  $b \in B$ for which $v_1(b) \neq v_2(b)$. Since $u$ is surjective, there exists an element $a \in A$ such that $u(a) = b$. It follows that $v_1(u(a)) \neq v_2(u(a))$ which shows the injectivity of $u'$.\\ 
+
+A morphism which is both injective and surjective is said to be $bijective$.
+
+\section{Isomorphisms and Balance}
+
+$\textbf{Definition 4.}$ In a category, two objects $A$ and $B$ are said to be isomorphic if there exist morphisms $f:A \rightarrow B$ and $g:B \rightarrow A$ so that $g\circ f = 1_A$ and $f \circ g = 1_B$.\\
+
+\textbf{Exercise 2.} Prove that the composition of injections, surjections, and isomorphisms are again injections, surjections and isomorphisms.\\ 
+
+A category in which the bijections are exactly the isomorphisms is said to be $balanced$.\\ 
+
+$\textbf{Ex 5.}$ When considered as a set map, the inclusion of the integers in the rationals is obviously not surjective. However, in the category of rings, $\textbf{Ring}$, it is a simple matter to show that this inclusion does define a surjection in $\textbf{Ring}$.\\
+
+$\textbf{Exercise 3.}$ Is $\textbf{Set}$ balanced? Is $\textbf{Ring}$ balanced?\\
+
+\section{Initial, Final, and Zero Objects}
+
+Very often, when investigating some mathematical object we look at its subobjects or quotient objects. Similarly when looking at a map between two objects it is useful to understand some of the subobjects involved and the way in which the morphism behaves on those subobjects. 
+
+We now introduce a pair of definitions and a pair of categories which will give us the proper setting to discuss these constructions.\\ 
+
+$\textbf{Definition 5.}$ Given a category $\mathcal{C}$ if there is an object $X \in ob(\mathcal{C})$ such that for every other object $C \in ob(\mathcal{C})$, the class $Mor(X,C)$ is a singleton, we say that $X$ is an $initial$ $object$ for the category $\mathcal{C}$. That is, there is exactly one morphism from $X$ to every other object in the category.\\ 
+
+$\textbf{Definition 6.}$ Given a category $\mathcal{C}$ if there is an object $X \in ob(\mathcal{C})$ such that for every other object $C \in ob(\mathcal{C})$, the class $Mor(C,X)$ is a singleton, we say that $X$ is a $final$ $object$ for the category $\mathcal{C}$. That is, there is exactly one morphism to $X$ from every other object in the category.\\ 
+
+$\textbf{Proposition 3.}$ If a category $\mathcal{C}$ has an initial object $X$, it is unique up to isomorphism. That is, if there is any other object $Y$ which is also initial, it must be isomorphic to $X$.  To see this, note that there is a unique morphism from $X$ to $Y$ and from $Y$ to $X$. Composing these morphisms we obtain a morphism from $X$ to $X$ or from $Y$ to $Y$ depending on the order of composition. However, $Mor(X,X)$ and $Mor(Y,Y)$ are both singletons and by the definition of a category must contain $1_X$ and $1_Y$ respectively. This does not leave much choice for what the compositions are.\\
+
+$\textbf{Proposition 4.}$ If a category $\mathcal{C}$ has a final object $X$, it is unique up to isomorphism. The proof is similar to the one given in proposition 3. \\
+
+$\textbf{Definition 7.}$ If a category has both an initial and a final object and they are equal, then that object is called a $zero$ $object$ for the category. Note that if a category has a zero object $*$ then between any two objects $A$ and $B$ there is a morphism from $A$ to $B$ which passes through $*$ and is denoted $0_{A,B}$. It is defined to be the composite map $A \rightarrow * \rightarrow B$ which exists because $*$ is both initial and final. \\
+
+\section{Subobjects and Quotient Objects}
+
+$\textbf{Definition 8.}$ Given an object $A$ in a category $\mathcal{C}$, define the category $\mathcal{C}_A$ as follows. The objects of this category are morphisms in $\mathcal{C}$ going into $A$. Morphisms in this category are given by precomposing the morphisms going into $A$ with other morphisms of $\mathcal{C}$. Similarly define a category $\mathcal{C}^A$ who's objects are morphisms in $\mathcal{C}$ coming out of $A$ and who's morphisms are given by post composition.\\ 
+
+Let $X$ and $Y$ be objects of $\mathcal{C}$ and let $f:X \rightarrow A$ and $g:Y \rightarrow A$ be morphisms of $\mathcal{C}$. Notice also that $f$ and $g$ are objects of $\mathcal{C}_A$. Let $u: Y \rightarrow X$ be a morphism of $\mathcal{C}$. If $f\circ u = g$, then $u$ is a morphism in $\mathcal{C}_A$. This is shown in the figure below:\\
+
+\begin{center}
+\begin{tikzcd}
+X \arrow[r,"f"] & A \\
+Y \arrow[ru, "g = 'u(f)"'] \arrow[u, "u"] 
+\end{tikzcd}
+\end{center}
+\begin{center}
+\textbf{Figure 3.}
+\end{center}
+
+
+$\textbf{Exercise 3.}$ Verify that $\mathcal{C}_A$ and $\mathcal{C}^A$ are a categories. For which category would it be more fruitful to discuss an initial object?  For which category would it be more fruitful to discuss a final object?\\
+
+\textbf{Definition 9.} A subcategory $\mathcal{D}$ of a category $\mathcal{C}$ is a category with $ob(\mathcal{D}) \subset ob(\mathcal{C})$, and for each class $Mor_\mathcal{D}(A,B) \subset Mor_\mathcal{C}(A,B)$. Additionally the operation composition in $\mathcal{D}$ is exactly the restriction of the operation in $\mathcal{C}$. Lastly, Each object in $\mathcal{D}$ retains its identity morphism from $\mathcal{C}$.\\ 
+
+A $full$ $subcategory$ is one in which only objects are removed, that is, if $A$ and $B$ are objects in $\mathcal{D}$, $Mor_\mathcal{D}(A,B) = Mor_\mathcal{C}(A,B)$. \\
+
+\textbf{Definition 10.} We examine now the subcategory of $\mathcal{C}_A$ who's objects are just the injections into $A$. We denote this category $\mathcal{S}_A$ and call it the $category$ $of$ $subobjects$ of $A$. An object of $\mathcal{S}_A$ is a $subobject$ of $A$ and it is considered up to isomorphism. That is, if $f$ and $g$ are isomorphic objects in $\mathcal{S}_A$, they are considered to be the same subobject. \\
+
+\textbf{Definition 10.} Similarly, we call the subcategory of $\mathcal{C}^A$ who's objects are just the surjections from $A$, the category of quotient objects of $A$. It is denoted $\mathcal{Q}^A$. Quotient objects are also only considered up to isomorphism. 
+
+\section{Range and Corange}
+
+We can now define the range of a morphism in a category $\mathcal{C}$.\\
+
+\textbf{Definition 11.} Let $A$ and $B$ be objects of a category $\mathcal{C}$, and let $f$ be a morphism $f:B \rightarrow A$. Define $\mathcal{S}^B_A$ to be the full subcategory of $\mathcal{S}_A$
+whose objects $u:X\rightarrow A$ are part of a unique factorization of $f$. That is, for each $u$ there exists a unique $f':B \rightarrow X$ such that $f =u(f')$. This is shown below.  
+
+\begin{center}
+\begin{tikzcd}
+X \arrow[r,"u"] & A \\
+B \arrow[ru, "f = 'u(f') = u\circ f'"'] \arrow[u, "f'"] 
+\end{tikzcd}
+\end{center}
+\begin{center}
+\textbf{Figure 4.}
+\end{center}
+
+\textbf{Definition 12.} An initial object of $\mathcal{S}^B_A$ is called the $range$ of the morphism $f$, and is denoted $Ran(f)$. The range is determined up to isomorphism (as are all initial objects).  
+
+\begin{center}
+\begin{tikzcd}
+X \arrow[rrd,"u", bend left] & \\
+& Ran(f) \arrow[r,"i",near start] \arrow[lu, "x"',dashed] & A \\
+& B \arrow[luu,"f'", bend left] \arrow[ru, "f"'] \arrow[u, "r"'] 
+\end{tikzcd}
+\end{center}
+\begin{center}
+\textbf{Figure 5.}
+\end{center} 
+
+\textbf{Proposition 5.} In the category  \textbf{Set} $Ran(f)$ is isomorphic to $$f(B) = \{a \in A| \ \exists b \ s.t.\ f(b) = a\}.$$
+
+Let $X = f(B)$ in figure 5. Since $Ran(f)$ is initial, there is one morphism from $Ran(f)$ to $A$, namely $i$. Then $u\circ x = i$ and since $i$ is injective, so must x be. Suppose now that $x$ is not surjective. Then there is an $a \in f(B)$ such that for no $c \in Ran(f)$, $x(c) = a$. But for all $a \in f(B)$ there is a $b \in B$ for which $f(b) = a$ but then $u(f'(b)) = a$ and hence $u(x(r(b))) = a$. Letting $c = r(b)$ we have derived a contradiction. So $x$ is both injective and surjective. Since $\textbf{Set}$ is balanced, $f(B)$ is isomorphic to $Ran(f)$.\\
+
+\textbf{Definition 13.} Let $A$ and $B$ be objects of a category $\mathcal{C}$, and let $f$ be a morphism $f:B \rightarrow A$. Define $\mathcal{Q}^B_A$ to be the full subcategory of $\mathcal{Q}^B$
+whose objects are surjections $u:B\rightarrow X$ which are part of a unique factorization of $f$. That is, for each $u$ there exists a unique $f':X \rightarrow A$ such that $f =f'\circ u$.\\ 
+
+\textbf{Definition 14.} A final object of $\mathcal{Q}^B_A$ is called the $corange$ of $f$. It is denoted $Cor(f)$.
+
+\end{document}
